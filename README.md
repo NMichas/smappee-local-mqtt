@@ -45,7 +45,7 @@ The binary of the client is published as a Maven artifact under:
 <version>1.0.0</version>
 ```
 Alternatively, you can also download it from GitHub:  
-smappee-local-mqtt
+[smappee-local-mqtt](https://github.com/NMichas/smappee-local-mqtt/releases/download/1.0.0/smappee-local-mqtt-1.0.0.jar)
 
 ## How to run
 `java -jar smappee-local-mqtt-1.0.0.jar`
