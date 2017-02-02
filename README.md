@@ -74,7 +74,7 @@ Your chosen MQTT topic receives measurements in the following JSON structure:
 }
 ```
 _Note: Currently only 3-phase, no solar power systems are supported, since this
-is what I have to test with. Feel free to submit a PR for additional measurements.:_
+is what I have to test with. Feel free to submit a PR for additional measurements._
 
 ### Control
 You can control the devices (smart plugs) connected to your Smappee hub by publishing
@@ -95,3 +95,164 @@ Turn off:
 "status": false
 }
 ```
+
+## Bonus items
+### Integration in Home Assistant
+#### Getting measurements
+```
+sensor voltage:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Voltage"
+    unit_of_measurement: "V"
+    value_template: "{{value_json.voltage}}"
+
+sensor phase1_current:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Current - phase 1"
+    unit_of_measurement: "A"
+    value_template: "{{value_json.phase1_current}}"
+
+sensor phase2_current:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Current - phase 2"
+    unit_of_measurement: "A"
+    value_template: "{{value_json.phase2_current}}"
+
+sensor phase3_current:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Current - phase 3"
+    unit_of_measurement: "A"
+    value_template: "{{value_json.phase3_current}}"
+
+sensor phase1_activePower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Active power - phase 1"
+    unit_of_measurement: "W"
+    value_template: "{{value_json.phase1_activePower}}"
+
+sensor phase2_activePower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Active power - phase 2"
+    unit_of_measurement: "W"
+    value_template: "{{value_json.phase2_activePower}}"
+
+sensor phase3_activePower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Active power - phase 3"
+    unit_of_measurement: "W"
+
+sensor phase1_reactivePower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Reactive power - phase 1"
+    unit_of_measurement: "var"
+    value_template: "{{value_json.phase1_reactivePower}}"
+
+sensor phase2_reactivePower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Reactive power - phase 2"
+    unit_of_measurement: "var"
+    value_template: "{{value_json.phase2_reactivePower}}"
+
+sensor phase3_reactivePower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Reactive power - phase 3"
+    unit_of_measurement: "var"
+    value_template: "{{value_json.phase3_reactivePower}}"
+
+sensor phase1_apparentPower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Apparent power - phase 1"
+    unit_of_measurement: "VA"
+    value_template: "{{value_json.phase1_apparentPower}}"
+
+sensor phase2_apparentPower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Apparent power - phase 2"
+    unit_of_measurement: "VA"
+    value_template: "{{value_json.phase2_apparentPower}}"
+
+sensor phase3_apparentPower:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Apparent power - phase 3"
+    unit_of_measurement: "VA"
+    value_template: "{{value_json.phase3_apparentPower}}"
+
+sensor phase1_cosfi:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Cos(φ) - phase 1"
+    value_template: "{{value_json.phase1_cosfi}}"
+
+sensor phase2_cosfi:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Cos(φ) - phase 2"
+    value_template: "{{value_json.phase2_cosfi}}"
+
+sensor phase3_cosfi:
+  - platform: mqtt
+    state_topic: "hass/smappee/measurements"
+    name: "Cos(φ) - phase 3"
+    value_template: "{{value_json.phase3_cosfi}}"
+    
+sensor templates:
+  - platform: template
+    sensors:
+      total_power:
+        friendly_name: "Total power"
+        unit_of_measurement: "W"
+        value_template: "{{ states('sensor.active_power__phase_1')|int  + states('sensor.active_power__phase_2')|int + states('sensor.active_power__phase_3')|int }}"
+      total_current:
+        friendly_name: "Total current"
+        unit_of_measurement: "A"
+        value_template: "{{ states('sensor.current__phase_1')|int  + states('sensor.current__phase_2')|int + states('sensor.current__phase_3')|int }}"
+    
+```
+
+#### Controlling devices
+```
+switch smappe_switch1:
+  platform: mqtt
+  command_topic: 'hass/smappee/control'
+  payload_on: '{"id": 1, "status": true}'
+  payload_off: '{"id": 1, "status": false}'
+```
+
+### Systemd configuration
+Create `/lib/systemd/system/smappee-client.service` with the following content:
+
+```
+[Unit]
+Description=Smappee client Daemon
+
+[Service]
+WorkingDirectory=/home/myuser/smappee
+ExecStart=/usr/bin/java -jar smappee-local-mqtt-1.0.0.jar
+User=myuser
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Substituting `myuser` with the user you want to run the client with. Don't forget to
+place `smappee-local-mqtt.conf` and `smappee-local-mqtt-1.0.0.jar` under the location you specify in WorkingDirectory.
+
+* Start the service  
+  `sudo systemctl start smappee-client`
+* Stop the service  
+  `sudo systemctl stop smappee-client`
+* Automatically start the service on boot  
+  `sudo systemctl enable smappee-client`
