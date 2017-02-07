@@ -3,7 +3,7 @@ A (quick and dirty Java) client for a local Smappee hub.
  
 This client connects to your local Smappee hub (no need to access the online API)
 and:
- * pools for measurements and publish them to an MQTT topic.
+ * polls for measurements and publish them to an MQTT topic.
  * listens to an MQTT topic for device control (on/off) messages.
   
   
