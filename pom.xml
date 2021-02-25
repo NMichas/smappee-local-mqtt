@@ -16,7 +16,7 @@
     <camel.version>2.18.1</camel.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <fluent-hc.version>4.5.2</fluent-hc.version>
-    <jackson.version>2.8.5</jackson.version>
+    <jackson.version>2.9.10.7</jackson.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <lombok.version>1.18.18</lombok.version>
     <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
