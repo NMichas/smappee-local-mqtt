@@ -1,1 +1,5 @@
 target
+/.idea/
+/dependency-reduced-pom.xml
+/slm.iml
+/smappee-local-mqtt.iml

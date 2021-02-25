@@ -1,0 +1,14 @@
+FROM adoptopenjdk:15.0.2_7-jre-openj9-0.24.0
+
+# Set working directory.
+WORKDIR /app
+
+# Add app.
+COPY target/smappee-local-mqtt-2.0.jar /app
+
+RUN sed -i.bak \
+    -e "s/securerandom.source=file:\/dev\/random/securerandom.source=file:\/dev\/urandom/g" \
+    -e "s/securerandom.strongAlgorithms=NativePRNGBlocking/securerandom.strongAlgorithms=NativePRNG/g" \
+    $JAVA_HOME/conf/security/java.security
+
+CMD ["/opt/java/openjdk/bin/java", "-jar", "/app/smappee-local-mqtt-2.0.jar"]

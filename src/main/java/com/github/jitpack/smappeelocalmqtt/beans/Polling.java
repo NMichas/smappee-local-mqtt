@@ -1,6 +1,5 @@
 package com.github.jitpack.smappeelocalmqtt.beans;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 
