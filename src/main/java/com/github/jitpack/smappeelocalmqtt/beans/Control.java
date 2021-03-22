@@ -2,23 +2,22 @@ package com.github.jitpack.smappeelocalmqtt.beans;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jitpack.smappeelocalmqtt.dto.ControlDTO;
-import java.util.logging.Level;
-import lombok.extern.java.Log;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 
-import java.io.IOException;
-
-@Log
+@Slf4j
 public class Control {
-	private ObjectMapper mapper = new ObjectMapper();
 
-	public void handle(Exchange exchange) throws IOException {
-		SmappeeClient smappeeClient = exchange.getContext().getRegistry()
-				.lookupByNameAndType("smappeeClient", SmappeeClient.class);
+  private ObjectMapper mapper = new ObjectMapper();
 
-		ControlDTO controlDTO = mapper.readValue(exchange.getIn()
-				.getBody().toString(), ControlDTO.class);
-		log.log(Level.FINE, "Setting control value: {0}", controlDTO.toString());
-		smappeeClient.setStatus(controlDTO);
-	}
+  public void handle(Exchange exchange) throws IOException {
+    SmappeeClient smappeeClient = exchange.getContext().getRegistry()
+        .lookupByNameAndType("smappeeClient", SmappeeClient.class);
+
+    ControlDTO controlDTO = mapper.readValue(exchange.getIn()
+        .getBody().toString(), ControlDTO.class);
+    log.debug("Setting control value: {}", controlDTO.toString());
+    smappeeClient.setStatus(controlDTO);
+  }
 }

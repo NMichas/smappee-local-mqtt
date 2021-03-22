@@ -1,22 +1,22 @@
 package com.github.jitpack.smappeelocalmqtt.beans;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.logging.Level;
-import lombok.extern.java.Log;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 
-import java.io.IOException;
-
-@Log
+@Slf4j
 public class Polling {
-	private ObjectMapper mapper = new ObjectMapper();
 
-	public String handle(Exchange exchange) throws IOException {
-		SmappeeClient smappeeClient = exchange.getContext().getRegistry()
-				.lookupByNameAndType("smappeeClient", SmappeeClient.class);
-		String serialisedMeasurements = mapper.writeValueAsString(smappeeClient.getMeasurements());
-		log.log(Level.FINE, "Polled value: {0}", serialisedMeasurements);
+  private ObjectMapper mapper = new ObjectMapper();
 
-		return serialisedMeasurements;
-	}
+  public String handle(Exchange exchange) throws IOException {
+    log.debug("Polling...");
+    SmappeeClient smappeeClient = exchange.getContext().getRegistry()
+        .lookupByNameAndType("smappeeClient", SmappeeClient.class);
+    String serialisedMeasurements = mapper.writeValueAsString(smappeeClient.getMeasurements());
+    log.debug("Polled value: {}", serialisedMeasurements);
+
+    return serialisedMeasurements;
+  }
 }
