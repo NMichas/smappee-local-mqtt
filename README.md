@@ -1,3 +1,9 @@
+⚠️ **No longer maintained** ⚠️
+
+I've switched to [Qubino 3 phase smart meter](https://qubino.com/products/3-phase-smart-meter)
+
+---
+
 # Smappee MQTT
 A client for a local Smappee hub.
  
